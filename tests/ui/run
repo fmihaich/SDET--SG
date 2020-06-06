@@ -1,0 +1,31 @@
+#!/bin/bash
+
+# Install test requirements
+pip3 install -r tests/ui/requirements.txt
+
+# Run ui tests
+find . | grep -E "(__pycache__|\.pyc|\.pyo$)" | xargs rm -rf
+[ -e tests/ui/output/results.json ] && rm tests/ui/output/results.json
+
+behave -s tests/ui/*/features --no-logcapture -f json -o tests/ui/output/results.json "$@"
+
+if [[ $? = 0 ]]; then
+    echo ""
+    echo "#############################"
+    echo "###### UI TESTS PASSED ######"
+    echo "#############################"
+    echo ""
+    TEST_PASSED=1
+else
+    echo ""
+    echo "#############################"
+    echo "###### UI TESTS FAILED ######"
+    echo "#############################"
+    echo ""
+fi
+
+
+if [[ -z $TEST_PASSED ]]
+then
+    exit 1
+fi

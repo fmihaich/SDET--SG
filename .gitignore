@@ -1,0 +1,8 @@
+.idea/
+.cache
+.project
+.pydevproject
+.DS_Store
+__pycache__
+
+tests/ui/output/
