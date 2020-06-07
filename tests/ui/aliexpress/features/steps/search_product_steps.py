@@ -31,6 +31,7 @@ def select_page_result(context, page_number):
 def click_on_product(context, product_number):
     search_result_page = context.current_page
     context.selected_product_title = search_result_page.get_product_title(product_number)
+    context.selected_product_pathname = search_result_page.get_product_pathname(product_number)
     product_details_driver = search_result_page.select_product(product_number)
     logging.info('Selected product title (search result): {0}'.format(context.selected_product_title))
     context.current_page = ProductDetailsPage(driver=product_details_driver)

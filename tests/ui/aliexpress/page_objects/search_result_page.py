@@ -14,6 +14,7 @@ class SearchResultPage(BaseAliexpressPage):
     page_number_locator = (By.XPATH, '//div[@class="next-pagination-list"]/button')
     gallery_first_row_products_locator = (By.XPATH, '//ul[@class="list-items"]/div[1]/li')
     product_link_xpath = '//ul[@class="list-items"]/{view_div}li[{product_order}]//*/div[@class="item-title-wrap"]/a'
+    product_img_xpath = '//ul[@class="list-items"]/{view_div}li[{product_order}]//*/img[@class="item-img"]'
 
     def __init__(self, driver):
         self.current_view = DEFAULT_VIEW
@@ -46,13 +47,17 @@ class SearchResultPage(BaseAliexpressPage):
     @close_new_user_discount
     def select_product(self, product_number):
         windows_handler_count = len(self.get_window_handlers())
-        self.click_on(locator=self._get_product_link_locator(product_number))
+        self.click_on(locator=self._get_product_img_locator(product_number))
         self.wait_until_window_handlers_greater_than(windows_handler_count)
         return self.switch_to_new_window()
 
     def get_product_title(self, product_number):
         return \
             self.get_element_attribute(locator=self._get_product_link_locator(product_number), attribute_name="title")
+
+    def get_product_pathname(self, product_number):
+        return self.get_element_attribute(
+            locator=self._get_product_link_locator(product_number), attribute_name="pathname")
 
     def _move_to_page_selector(self):
         self.scroll_to_bottom()
@@ -71,15 +76,21 @@ class SearchResultPage(BaseAliexpressPage):
                 'Interaction with "Next Page" button is necessary to reach {0} page'.format(page_number))
         page_number_buttons[page_index].click()
 
+    def _get_product_img_locator(self, product_number):
+        return self._get_product_locator(product_number, base_xpath=self.product_img_xpath)
+
     def _get_product_link_locator(self, product_number):
+        return self._get_product_locator(product_number, base_xpath=self.product_link_xpath)
+
+    def _get_product_locator(self, product_number, base_xpath):
         if self.current_view != DEFAULT_VIEW:
             div_num, li_num = self._get_product_position_in_gallery(product_number)
             view_div = 'div[{0}]/'.format(div_num)
         else:
             view_div = ''
             li_num = product_number
-        product_link_locator = (By.XPATH, self.product_link_xpath.format(view_div=view_div, product_order=li_num))
-        return product_link_locator
+        product_locator = (By.XPATH, base_xpath.format(view_div=view_div, product_order=li_num))
+        return product_locator
 
     def _get_product_position_in_gallery(self, product_number):
         first_row_products = self.get_web_elements(locator=self.gallery_first_row_products_locator)

@@ -32,6 +32,9 @@ class BasePage:
         element = self.get_web_element(locator, web_element)
         return element.get_attribute(name=attribute_name)
 
+    def get_current_url(self):
+        return self.driver.current_url
+
     def wait_until_loaded(self, locator, wait_time=30):
         WebDriverWait(self.driver, wait_time).until(EC.presence_of_element_located(locator))
 
