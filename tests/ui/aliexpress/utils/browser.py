@@ -1,7 +1,5 @@
 import os
 
-from selenium.webdriver.chrome.options import Options as ChromeOptions
-from selenium.webdriver.chrome.webdriver import ChromeRemoteConnection
 from selenium.webdriver.remote.webdriver import WebDriver
 from tests.ui.aliexpress.config.config import get_config
 
@@ -22,8 +20,8 @@ class Browser(object):
             command_executor='http://{0}:4444/wd/hub'.format(driver_host),
             desired_capabilities={"browserName": browser_name})
 
-        self.driver.set_page_load_timeout(15)
-        self.driver.implicitly_wait(15)
+        self.driver.set_page_load_timeout(30)
+        self.driver.implicitly_wait(30)
         self.driver.maximize_window()
 
     def close(self):
