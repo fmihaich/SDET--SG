@@ -2,6 +2,7 @@ import logging
 
 from behave import step
 
+from tests.ui.aliexpress.page_objects.product_details_page import ProductDetailsPage
 from tests.ui.aliexpress.page_objects.search_result_page import SearchResultPage
 
 
@@ -26,12 +27,15 @@ def click_on_gallery_option(context):
 
 @step('I select the result page number "{page_number:d}"')
 def select_page_result(context, page_number):
+    if page_number < 1:
+        raise RuntimeError('Page number shall be greater than 1')
     search_result_page = context.current_page
-    search_result_page.scroll_to_bottom()
+    search_result_page.move_to_page_selector()
     search_result_page.click_on_page_number(page_number)
 
 
 @step('I click on the product number "{product_number}" of the current result page')
 def click_on_product(context, product_number):
     search_result_page = context.current_page
-    search_result_page.select_product(product_number)
+    product_details_driver = search_result_page.select_product(product_number)
+    context.current_page = ProductDetailsPage(driver=product_details_driver)

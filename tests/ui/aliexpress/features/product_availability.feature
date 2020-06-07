@@ -6,4 +6,5 @@ Feature: Product availability
         And I search for "iphone" product
         And I click on "gallery" view option
         And I select the result page number "2"
-        And I click on the product number "2" of the current result page
+        When I click on the product number "2" of the current result page
+        Then I see there are at least "1" available product to buy

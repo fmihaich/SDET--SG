@@ -32,10 +32,17 @@ class SearchResultPage(BaseAliexpressPage):
         from time import sleep
         sleep(3)
 
+    def move_to_page_selector(self):
+        self.scroll_to_bottom()
+        self.move_page_up()
+        for _ in range(3):
+            try:
+                self.wait_until_clickable(locator=self.page_number_locator)
+            except:
+                self.move_page_up()
+
     @close_new_user_discount
     def click_on_page_number(self, page_number):
-        if page_number < 1:
-            raise RuntimeError('Page number shall be greater than 1')
         page_number_buttons = self.get_web_elements(locator=self.page_number_locator)
         page_index = page_number - 1
 
@@ -45,10 +52,11 @@ class SearchResultPage(BaseAliexpressPage):
 
         page_number_buttons[page_index].click()
         from time import sleep
-        sleep(5)
+        sleep(3)
 
     def select_product(self, product_number):
+        windows_handler_count = len(self.get_window_handlers())
         second_product = self.get_web_element(self.second_product_locator)
         self.click_on(locator=self.product_link_locator, web_element=second_product)
-        from time import sleep
-        sleep(3)
+        self.wait_until_window_handlers_greater_than(windows_handler_count)
+        return self.switch_to_new_window()
