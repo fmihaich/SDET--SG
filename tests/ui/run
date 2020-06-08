@@ -24,6 +24,27 @@ else
     echo ""
 fi
 
+# Generate Reports
+sleep 2
+cp tests/ui/output/results.json tests/ui/output/$BROWSER/results.json
+python3 -m behave2cucumber -i tests/ui/output/$BROWSER/results.json -o tests/ui/output/$BROWSER/results_cucumber.json
+
+# Run html report generator
+REPORT_GENERATOR_DIR=tests/ui/html_report_generator
+HOME_DIR=${PWD}
+
+cd $REPORT_GENERATOR_DIR
+
+npm install
+./run -i ../output/$BROWSER/results_cucumber.json -o ../output/$BROWSER/results.html -b $BROWSER
+
+cd $HOME_DIR
+
+echo ""
+echo "See output results in: tests/ui/output/$BROWSER"
+echo "Check html summary in: tests/ui/output/$BROWSER/results.html"
+echo ""
+
 
 if [[ -z $TEST_PASSED ]]
 then

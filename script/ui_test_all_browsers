@@ -1,0 +1,48 @@
+#!/bin/bash
+
+CHROME_BROWSER=chrome
+FIREFOX_BROWSER=firefox
+DEFAULT_ENV=PDR_DOCKER
+
+while [[ $# -gt 0 ]]
+do
+    key="$1"
+    case $key in
+        -e|--env)
+            TEST_ENV="$2"
+            shift
+            ;;
+        *)
+            # unknown option
+            ;;
+    esac
+    shift
+done
+
+if [[ -z $TEST_ENV ]]
+then
+    TEST_ENV=$DEFAULT_ENV
+fi
+
+echo "Stopping & starting docker container"
+docker-compose -f ui_tests.yml down
+docker-compose -f ui_tests.yml up -d
+
+sleep 3
+
+docker-compose -f ui_tests.yml ps
+
+echo "RUNNING UI TESTS"
+echo "Running UI tests using browser: $CHROME_BROWSER"
+echo "Test environment: $TEST_ENV"
+docker-compose -f ui_tests.yml exec -T -e BROWSER=$CHROME_BROWSER -e TEST_ENV=$TEST_ENV test_runner tests/ui/run
+
+echo "RUNNING UI TESTS"
+echo "Running UI tests using browser: $FIREFOX_BROWSER"
+echo "Test environment: $TEST_ENV"
+docker-compose -f ui_tests.yml exec -T -e BROWSER=$FIREFOX_BROWSER -e TEST_ENV=$TEST_ENV test_runner tests/ui/run
+
+echo ""
+echo "Stopping container"
+docker-compose -f ui_tests.yml down
+

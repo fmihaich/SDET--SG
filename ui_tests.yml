@@ -13,7 +13,7 @@ services:
     volumes:
     - /dev/shm:/dev/shm
   test_runner:
-    image: python:3.8
+    build: ./test_runner
     environment:
     - TEST_ENV=PDR_DOCKER
     - BROWSER=chrome

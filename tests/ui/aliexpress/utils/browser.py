@@ -22,6 +22,7 @@ class Browser(object):
 
         self.driver.set_page_load_timeout(30)
         self.driver.implicitly_wait(30)
+        self.driver.maximize_window()
 
     def close(self):
         self.driver.close()
