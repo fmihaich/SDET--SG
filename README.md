@@ -7,6 +7,9 @@
 - [Technical decisions](#technical-decisions)
 - [Testing environment](#testing-environment)
 - [How to run tests](#how-to-run-tests)
+- [Test execution output](#test-execution-output)
+- [Test report samples](#test-report-samples)
+- [Found issues](#found-issues)
 
 
 
@@ -22,7 +25,15 @@ The ``test case`` related to the exercise description is defined in the followin
 
 * [Feature: Product availability](tests/ui/aliexpress/features/product_availability.feature)
 
-Actually, there are 2 scenarios defined in that feature file, both follow the test description.
+Actually, there are 2 scenarios defined in that feature file:
+
+* Scenario: Check second product of second result page availability
+    * It follows exactly the exercise requirement.
+    * It is tagged as ``@EXERCISE``
+
+* Scenario: Check third product of first result page availability with gallery view
+    * It really similar to the exercise description. It tests other item view and shows the re-usability of steps.
+    * It is tagged as ``@EXTRA``
 
 Each test case can be executed using **``Chrome``** or **``Firefox``** browsers.
 
@@ -71,7 +82,10 @@ test suit `html` reports.
 
 ### How to run tests
 
-You can simply run **``./script/ui_test``** 😄 (Source: [script/ui_test](script/ui_test))
+You can simply run **``./script/ui_test``** (source: [script/ui_test](script/ui_test)) 😄 
+
+Besides, to run test suit with chrome and firefox browser (sequentially), you can run 
+**``./script/ui_test_all_browsers``** (source: [script/ui_test_all_browsers](script/ui_test_all_browsers))
 
 If you manually want to run or edit UI tests, start the [ui_tests.yml](ui_tests.yml) docker-compose 
 environment by running:
@@ -111,3 +125,43 @@ After everything is done, down the docker-compose environment:
 
 ```bash
 docker-compose -f ui_tests.yml down -v
+```
+
+## Test execution output
+
+Test execution output is store in ``tests/ui/output/<browser>/``, where browser can be chrome or firefox.
+
+The output directory includes:
+* One folder per each executed scenario that stores one browser image per executed step.
+* Result in `json` format (if execution was run through [tests/ui/run](tests/ui/run) script 
+or specifying a json formatter)
+* The **`result.html`** with the summary of the test execution (if execution was run through 
+[tests/ui/run](tests/ui/run))
+
+
+## Test report samples
+
+There are 2 report samples in [test_results_samples](test_results_samples) repo folder.
+
+These reports corresponds to the suit execution, one running using `chrome` browser and the other using 
+`firefox` browser. 
+
+The following image shows one execution summary:
+
+![aliexpress-results-summary.png](https://i.ibb.co/xF2kqpn/aliexpress-results-summary.png)
+
+
+## Found issues
+
+During the development of this exercise, the following ``random`` issues were found:
+
+* Change search result view does not always work:
+    * Sometimes a click on `gallery` view continues showing search results as list.
+    * A workaround that frequently works is to reload the page.
+* Click on search result page 2 (or any other different page than the current one) not always refresh the shown 
+products:
+    * A workaround that frequently works is to reload the page.
+
+``Note``: This issues were not reproduced the 100% of the times. 
+For that reason it was possible to get ``green reports`` for test execution, but it is also possible to see 
+an scenario failing randomly.
